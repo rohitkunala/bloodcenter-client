@@ -15,13 +15,21 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSh4AelUO6nrjQhqxnUxpv-0vvwnbd4Esg3nw&usqp=CAU");
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  /* display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
+  position: absolute;
   font-size: calc(10px + 2vmin);
   color: white;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .App-link {
