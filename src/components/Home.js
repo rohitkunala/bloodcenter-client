@@ -15,6 +15,13 @@ const Home = () => {
               </Button>
             </NavLink>
           </span>
+          <span style={{ float: "left", paddingLeft: 50 }}>
+            <NavLink to="/hospitaldemand">
+              <Button size="large" variant="contained" color="success">
+                New Hospital Demand
+              </Button>
+            </NavLink>
+          </span>
         </h1>
         <span style={{ paddingLeft: 100, paddingTop: 150, float: "left" }}>
           <ActionAreaCard title="Fixed" />

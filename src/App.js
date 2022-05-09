@@ -9,6 +9,7 @@ import All from "./components/All";
 
 import Home from "./components/Home";
 import SignUp from "./components/mui-components/SignUp";
+import HospitalDemandForm from "./components/mui-components/HospitalDemandForm";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/all" element={<All />} />
 
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/hospitaldemand" element={<HospitalDemandForm />} />
 
       </Routes>
     </BrowserRouter>
