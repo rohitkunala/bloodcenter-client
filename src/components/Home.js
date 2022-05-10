@@ -15,23 +15,34 @@ const Home = () => {
               </Button>
             </NavLink>
           </span>
-          <span style={{ float: "left", paddingLeft: 50 }}>
-            <NavLink to="/hospitaldemand">
-              <Button size="large" variant="contained" color="success">
-                New Hospital Demand
-              </Button>
-            </NavLink>
-          </span>
+          <div style={{ float: "left", paddingLeft: 50 }}>
+            <div>
+              <NavLink to="/hospitaldemand">
+                <Button size="large" variant="contained" color="success">
+                  New Hospital Demand
+                </Button>
+              </NavLink>
+            </div>
+            <div>
+              <NavLink to="/showhospitaldemand">
+                <Button size="large" variant="contained" color="success">
+                  show Hospital Demand
+                </Button>
+              </NavLink>
+            </div>
+          </div>
         </h1>
-        <span style={{ paddingLeft: 100, paddingTop: 150, float: "left" }}>
-          <ActionAreaCard title="Fixed" />
-        </span>
-        <span style={{ paddingLeft: 170, paddingTop: 150, float: "left" }}>
-          <ActionAreaCard title="Blood Center" />
-        </span>
-        <span style={{ paddingRight: 100, paddingTop: 150, float: "right" }}>
-          <ActionAreaCard title="Mobile" />
-        </span>
+        <div style={{ paddingLeft: 0, paddingTop: 150, float: "left", display: "flex"}}>
+          <span >
+            <ActionAreaCard title="Fixed" />
+          </span>
+          <span >
+            <ActionAreaCard title="Blood Center" />
+          </span>
+          <span >
+            <ActionAreaCard title="Mobile" />
+          </span>
+        </div>
       </header>
     </div>
   );

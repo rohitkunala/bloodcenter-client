@@ -5,12 +5,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import RadioGroup from "@mui/material/RadioGroup";
-import Radio from "@mui/material/Radio";
 import InputLabel from "@mui/material/InputLabel";
 import Input from "@mui/material/Input";
-import FormLabel from "@mui/material/FormLabel";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -19,26 +15,38 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 
-const theme = createTheme();
+import axios from "axios";
 
+const theme = createTheme();
 
 const HospitalDemandForm = () => {
   const [bg, setBg] = useState("");
-  const [radio, setRadio] = useState("fixed");
+  const [hospital, setHospital] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const donor = {
-      firstName: data.get("firstName"),
-      lastName: data.get("lastName"),
+    const hospitalDemand = {
+      hospitalName: data.get("searchHospital"),
       age: data.get("age"),
-      bloodGroup: bg,
-      location: data.get("location"),
-      mobile: data.get("mobile"),
-      facilityCenter: radio,
+      bloodgroup: data.get("searchBloodgroup"),
+      quantity: data.get("quantity"),
     };
-  }
+    const requestOptions = {
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(hospitalDemand),
+    };
+    axios
+      .post("http://localhost:5000/hospitalDemand", requestOptions)
+      .then((response) => {
+        console.log("flask response : ", JSON.parse(response.data));
+      })
+      .catch((data) => console.log(data));
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -66,13 +74,15 @@ const HospitalDemandForm = () => {
           >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} required>
-                <InputLabel htmlFor="searchHospital">Hospital Name & Location *</InputLabel>
+                <InputLabel htmlFor="searchHospital">
+                  Hospital Name & Location *
+                </InputLabel>
                 <Select
                   required
                   fullWidth
-                  onChange={(e) => setBg(e.target.value)}
+                  onChange={(e) => setHospital(e.target.value)}
                   input={<Input name="searchHospital" id="searchHospital" />}
-                  value={bg}
+                  value={hospital}
                 >
                   <MenuItem value="h1">H1</MenuItem>
                   <MenuItem value="h2">H2</MenuItem>
@@ -90,12 +100,16 @@ const HospitalDemandForm = () => {
                 <TextField required fullWidth id="age" label="Age" name="age" />
               </Grid>
               <Grid item xs={12} sm={6} required>
-                <InputLabel htmlFor="searchCriteria">Blood Group *</InputLabel>
+                <InputLabel htmlFor="searchBloodgroup">
+                  Blood Group *
+                </InputLabel>
                 <Select
                   required
                   fullWidth
                   onChange={(e) => setBg(e.target.value)}
-                  input={<Input name="searchCriteria" id="searchCriteria" />}
+                  input={
+                    <Input name="searchBloodgroup" id="searchBloodgroup" />
+                  }
                   value={bg}
                 >
                   {/* <MenuItem value="Select a Blood Group" selected disabled>
@@ -120,8 +134,7 @@ const HospitalDemandForm = () => {
                   name="quantity"
                 />
               </Grid>
-              
-              
+
               <Button
                 type="submit"
                 fullWidth
@@ -137,5 +150,5 @@ const HospitalDemandForm = () => {
       </Container>
     </ThemeProvider>
   );
-}
+};
 export default HospitalDemandForm;
