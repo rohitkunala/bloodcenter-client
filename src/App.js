@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
+import MainHome from "./components/MainHome";
 import FBF from "./components/FBF";
 import MBF from "./components/MBF";
 import BloodCenter from "./components/BloodCenter";
@@ -16,6 +17,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/mainhome" element={<MainHome />} />
         <Route path="/" element={<Home />} />
         <Route path="/fbf" element={<FBF />} />
         <Route path="/mbf" element={<MBF />} />
