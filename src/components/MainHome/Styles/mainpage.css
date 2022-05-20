@@ -1,4 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Sacramento&display=swap');
+
+body{
+  font-family: 'Pacifico', cursive;
+}
 .title{
-    background-color: #A1E3D8;
-    color:white;
+  display: relative;  
+   position: absolute;
+    width: 15%;
+    height: 25%;
+    left: 30px;
   }
+
+  .texttyping{
+    position: relative;
+    top: 160px;
+    left: 330px;
+    font-size: 90px;
+    color: #f62443;
+  }
+  .quotetag{
+   font-family: 'Sacramento', cursive;
+   font-size: 40px;
+   color: #069A8E;
+  }
+.blob1{
+  display: inline-block;
+  position: relative;
+  left: 750px; 
+   bottom: 400px; 
+}
+.img3{
+  position: absolute;
+  top: 50px;
+  width: 300px;
+  height:225px;
+  left: 1100px;
+}
+.img1{
+  position: absolute;
+  top: 350px;
+  left: 750px;
+}
+
+.blob3{
+  position: relative;
+  bottom: 800px; 
+  right: 200px;
+}
+/* .blob2{
+  position: relative;
+  bottom: 800px; 
+  right: 200px;
+}
+.img2{
+  position: absolute;
+  top: 750px;
+  left: 75px;
+  width: 900px;
+  height: 500px;
+} */
+.blob2{
+  position: relative;
+  bottom: 350px; 
+  right: 200px;
+}
+.img2{
+  position: absolute;
+  top: 1700px;
+  left: 75px;
+  width: 900px;
+  height: 500px;
+}
+.img5{
+  position: absolute;
+  top: 390px;
+  left:1px;
+}
+
+.img4{
+  position: absolute;
+  top:1200px;
+  left: 75px;
+}
+
+.cardbound{
+  padding: 20px;
+  height: 600px;
+  position: relative;
+  color: #069A8E;
+ text-align: center;
+  background-color: #16e2d127;
+  bottom: 300px;
+  border-radius: 30px;
+  font-size: 40px;
+}
+.cards{
+  position: relative;
+   display: flex;  
+ flex-wrap: wrap;
+  bottom: 10px;
+  padding-top: 80px;
+}
+.cardItem{
+  width: 400px;
+  padding-left: 30px;
+}
+
+.faqs{
+  position: absolute;
+  top: 2500px;
+  left: 250px;
+  border-radius: 15px;
+  /* width: 550px;
+  height:800px; */
+}
+
+.details{
+  position: absolute;
+  top: 1850px;
+  left: 860px;
+  background-color: #069a8e39;
+  border-radius: 50px;
+  width: 500px;
+  height:400px;
+  padding-top: 80px;
+  padding-left: 20px;
+  font-size: 30px;
+  color: #ed739af4;
+  padding-right: 20px;
+  text-align: center;
+}
+
+
+.footer{
+  height: 200px;
+  color: #43e7d9f4;
+  background-color: #069A8E;
+  text-align: center;
+  padding-top: 90px;
+  font-size: 20px;
+}
