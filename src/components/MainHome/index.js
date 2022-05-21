@@ -32,11 +32,11 @@ const MainHome = () => {
     setOpen(false);
   };
   const donor_matter =
-    "If you want to donate the you have to register yourself under any of 2 catergories.";
+    "If you want to donate ,then you have to Register here , Just click donate and register ";
   const center_matter =
-    " Details of donars under each category can be seen and also hospitals details.";
+    " Details of donors under each category and hospitals details can be seen here .";
   const hospital_matter =
-    " Register your hospital and mention the requirement of all blood groups.";
+    " Register your hospital Demand and mention the requirement of all blood groups.";
   return (
     <>
       <div className="title">

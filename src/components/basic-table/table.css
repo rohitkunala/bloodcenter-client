@@ -1,7 +1,9 @@
 table {
   font-family: 'Trebuchet MS' !important;
   border-collapse: collapse;
-  width: 100%;
+  width: 60% !important;
+  max-height: 60% !important;
+  overflow:scroll
 }
 
 table td,
