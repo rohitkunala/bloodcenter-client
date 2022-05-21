@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Rokkitt:wght@400&family=Sacramento&display=swap');
+body{
+    font-family: 'Pacifico', cursive;
+    /* background-color:#ce318023 !important; */
+    /* background-color:#d422e82b !important; */
+    /* background-color: #17cac135 !important; */
+  }
+
+.formWrap{
+    width: 800px;
+    height: 800px;
+    margin: 0;
+    padding: 0;
+}
+.content{
+    font-family: 'Pacifico', cursive;
+    color: #ce31c9ba;
+    position: relative;
+    text-align: center;
+    font-size: 30px;
+    bottom: 740px;
+    left: 800px;
+    width: 500px;
+    height: 500px;
+}
+.content1{
+    font-family: 'Pacifico', cursive;
+    color: #f62443ad;
+    text-align: center;
+    font-size: 30px;
+    position: relative;
+    bottom: 670px;
+    left: 800px;
+    width: 600px;
+    height: 900px;
+}

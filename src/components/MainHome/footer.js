@@ -6,12 +6,14 @@ import "./Styles/mainpage.css"
 
 function Footer(){
 return(
-<div className="footer">
+<div>
+<footer className="footer">
 <InstagramIcon fontSize="large" style={{ paddingRight: 20 }}  />
 <WhatsAppIcon fontSize="large" style={{ paddingRight: 20 }} />
 <EmailIcon fontSize="large" style={{ paddingRight: 20 }}/>
 <CallIcon fontSize="large" style={{ paddingRight: 20 }}/>
   <p>© Copyright 2022 OfferLife</p>
+</footer>
 </div>
 )
 }

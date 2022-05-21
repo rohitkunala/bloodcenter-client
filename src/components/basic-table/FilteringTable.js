@@ -43,11 +43,17 @@ export const FilteringTable = (props) => {
 
   return (
     <>
-      <Container sx={{ marginTop: 10, marginRight: 25 }}>
-        <div style={{ float: "right", paddingBottom: 10 }}>
+      <Container sx={{ marginTop: 10, margin:5 }}>
+        <div>
           <Button
             variant="contained"
-            color="success"
+            style={{
+              borderRadius: 35,
+              backgroundColor: "#08ee869c",
+              padding: "5px 9px",
+              fontSize: "15px",
+              fontWeight:"bold"
+          }} 
             onClick={() => props.onFetchDonors()}
           >
             Show Donors
@@ -55,11 +61,19 @@ export const FilteringTable = (props) => {
           <Button
             variant="contained"
             color="error"
+            style={{
+              borderRadius: 35,
+              backgroundColor: "#fb05159d",
+              padding: "5px 9px",
+              fontSize: "15px",
+              fontWeight:"bold"
+          }} 
             onClick={() => props.handleShow(!props.show)}
           >
             Hide
           </Button>
         </div>
+        <br/>
         {/* {show && <CustomizedTables donors={donors} all={true}></CustomizedTables>} */}
         {props.show && (
           <>

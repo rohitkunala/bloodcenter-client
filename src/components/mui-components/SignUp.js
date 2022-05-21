@@ -18,10 +18,13 @@ import Box from "@mui/material/Box";
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+ import { ThemeProvider,createTheme } from "@mui/material/styles";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
+
+
+import "./styles.css"
 import axios from "axios";
 import { useFormContext, Controller } from "react-hook-form";
 
@@ -43,7 +46,14 @@ function Copyright(props) {
   );
 }
 
-const theme = createTheme();
+// const theme = createTheme();
+const theme = createTheme({
+  typography: {
+  //  "fontFamily":`"Lobster Two", "cursive"`,
+  "fontFamily": `"Rokkitt", "serif"`,
+   "fontSize":20
+  }
+});
 
 export default function SignUp() {
 
@@ -91,7 +101,8 @@ export default function SignUp() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <div className="formWrap">
+      <Container component="main" maxWidth="sm">
         <CssBaseline />
         <Box
           sx={{
@@ -156,7 +167,7 @@ export default function SignUp() {
                   <MenuItem value="AB+">AB+</MenuItem>
                   <MenuItem value="AB-">AB-</MenuItem>
                   <MenuItem value="O+">O+</MenuItem>
-                  <MenuItem value="O-">O+</MenuItem>
+                  <MenuItem value="O-">O-</MenuItem>
                 </Select>
               </Grid>
               <Grid item xs={12}>
@@ -227,6 +238,12 @@ export default function SignUp() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                style={{
+                  borderRadius: 35,
+                  backgroundColor: "#21b6ae",
+                  padding: "10px 18px",
+                  fontSize: "25px",
+                  fontWeight:"100"}}
               >
                 Register
               </Button>
@@ -242,6 +259,16 @@ export default function SignUp() {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      </div>
+      <div className="content">
+        You are <b>Here</b> <br/>
+         you <b>Already</b> saved a life 
+     <img
+        style={{width:500,height:400}}
+        src={require("./../MainHome/Images/doner_form.png")}
+        alt="saving life"
+      />
+      </div>
     </ThemeProvider>
   );
 }

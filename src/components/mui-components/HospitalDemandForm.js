@@ -14,12 +14,27 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
-
+import "./styles.css"
 import axios from "axios";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-const theme = createTheme();
+const theme = createTheme({
+  typography: {
+  //  "fontFamily":`"Lobster Two", "cursive"`,
+  "fontFamily": `"Rokkitt", "serif"`,
+   "fontSize":20
+  }
+});
 
 const HospitalDemandForm = () => {
+  const routePath = useLocation();
+  const onTop = () => {
+    window.scrollTo(0, 0);
+  } 
+  useEffect(() => {
+    onTop()
+  }, [routePath]);
   const [bg, setBg] = useState("");
   const [hospital, setHospital] = useState("");
 
@@ -50,7 +65,11 @@ const HospitalDemandForm = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <div className="formWrap">
+      <Container component="main" maxWidth="sm">
+        <br/>
+        <br/>
+        <br/>
         <CssBaseline />
         <Box
           sx={{
@@ -63,7 +82,7 @@ const HospitalDemandForm = () => {
           {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar> */}
-          <Typography component="h1" variant="h5" color="red">
+          <Typography component="h1" variant="h5" color="#069A8E">
             Register a New Hospital Demand
           </Typography>
           <Box
@@ -84,7 +103,7 @@ const HospitalDemandForm = () => {
                   input={<Input name="searchHospital" id="searchHospital" />}
                   value={hospital}
                 >
-                  <MenuItem value="h1">H1</MenuItem>
+                  {/* <MenuItem value="h1">H1</MenuItem>
                   <MenuItem value="h2">H2</MenuItem>
                   <MenuItem value="h3">H3</MenuItem>
                   <MenuItem value="h4">H4</MenuItem>
@@ -93,7 +112,17 @@ const HospitalDemandForm = () => {
                   <MenuItem value="h7">H7</MenuItem>
                   <MenuItem value="h8">H8</MenuItem>
                   <MenuItem value="h9">H9</MenuItem>
-                  <MenuItem value="h10">H10</MenuItem>
+                  <MenuItem value="h10">H10</MenuItem> */}
+                  <MenuItem value="Vijaya Hospital, Pogathota">Vijaya Hospital, Pogathota</MenuItem>
+<MenuItem value="KIMS Hospital, Ambedkar Nagar">KIMS Hospital, Ambedkar Nagar</MenuItem>
+<MenuItem value="Apollo Hospitals, Ramji Nagar">Apollo Hospitals, Ramji Nagar</MenuItem>
+<MenuItem value="Narayana Hospital, Chinthareddy Palem">Narayana Hospital, Chinthareddy Palem</MenuItem>
+<MenuItem value="Vijaya Care Hospital, Rama Murthy Palem">Vijaya Care Hospital, Rama Murthy Palem</MenuItem>
+<MenuItem value="Rainbow Super Speciality Hospital, Brindavan Colony">Rainbow Super Speciality Hospital, Brindavan Colony</MenuItem>
+<MenuItem value="Simhapuri Hospital, Balaji Nagar">Simhapuri Hospital, Balaji Nagar</MenuItem>
+<MenuItem value="Lotus Hospital, Pogathota">Lotus Hospital, Pogathota</MenuItem>
+<MenuItem value="St. Joseph Hospital, Santhapet">St. Joseph Hospital, Santhapet</MenuItem>
+<MenuItem value="Jayabharath Hospital, Somasekhara Puram">Jayabharath Hospital, Somasekhara Puram</MenuItem>
                 </Select>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -122,7 +151,7 @@ const HospitalDemandForm = () => {
                   <MenuItem value="AB+">AB+</MenuItem>
                   <MenuItem value="AB-">AB-</MenuItem>
                   <MenuItem value="O+">O+</MenuItem>
-                  <MenuItem value="O-">O+</MenuItem>
+                  <MenuItem value="O-">O-</MenuItem>
                 </Select>
               </Grid>
               <Grid item xs={12}>
@@ -130,7 +159,7 @@ const HospitalDemandForm = () => {
                   required
                   fullWidth
                   id="quantity"
-                  label="Quantity"
+                  label="Quantity in mL"
                   name="quantity"
                 />
               </Grid>
@@ -140,6 +169,12 @@ const HospitalDemandForm = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                style={{
+                  borderRadius: 35,
+                  backgroundColor: "#21b6ae",
+                  padding: "10px 18px",
+                  fontSize: "25px",
+                  fontWeight:"100"}}
               >
                 Register
               </Button>
@@ -148,6 +183,16 @@ const HospitalDemandForm = () => {
         </Box>
         {/* <Copyright sx={{ mt: 5 }} /> */}
       </Container>
+      </div>
+      <div className="content1">
+        Register hospital <br/>  get the required demand in <b>TIME</b> 
+        {" "}
+     <img
+        style={{width:500,height:450,padding:3,margin:3}}
+        src={require("./../MainHome/Images/hospital_form.png")}
+        alt="saving life"
+      />
+      </div>
     </ThemeProvider>
   );
 };
