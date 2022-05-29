@@ -9,6 +9,7 @@ import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import About from "./about";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import { Link } from "react-router-dom";
 const style = {
   position: "absolute",
   top: "50%",
@@ -90,7 +91,7 @@ const MainHome = () => {
             Lorem ipsum, dolor sit amet consectetur adipisicing elit.
           </p></Box> */}
       </Modal>
-
+      <Link to="/maps" style={{ textDecoration: 'none' }}>
       <Button
         variant="contained"
         style={{
@@ -106,6 +107,7 @@ const MainHome = () => {
       >
         Maps for users
       </Button>
+      </Link>
 
       <div className="texttyping">
         Save{" "}

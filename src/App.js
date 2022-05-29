@@ -13,6 +13,8 @@ import SignUp from "./components/mui-components/SignUp";
 import HospitalDemandForm from "./components/mui-components/HospitalDemandForm";
 import { CustomizedTables as HospitalDemandTable}  from "./components/mui-components/HospitalDemandTable";
 
+import Maps from "./components/MainHome/Maps";
+
 function App() {
   return (
     <BrowserRouter>
@@ -24,6 +26,7 @@ function App() {
         <Route path="/bloodCenter" element={<BloodCenter />} />
         <Route path="/all" element={<All />} />
 
+        <Route path="/maps" element={<Maps />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/hospitaldemand" element={<HospitalDemandForm />} />
         <Route path="/showhospitaldemand" element={<HospitalDemandTable />} />
