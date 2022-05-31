@@ -1,4 +1,3 @@
-
 //         { lat: 14.3777, lng: 79.9291, name: "Chemudugunta" },
 //         { lat: 14.3605, lng: 79.9291, name: "Kakutur" },
 //         { lat: 14.3785, lng: 79.9137, name: "Kumkumpudi" },
@@ -14,61 +13,26 @@
 //         { lat: 14.4107, lng: 79.9438, name: "Kottur" },
 //         { lat: 14.403, lng: 79.95, name: "Ayyappa" },
 
+import React, { useEffect, useState } from "react";
+import {
+  GoogleMap,
+  InfoWindow,
+  Marker,
+  useLoadScript,
+  DistanceMatrixService,
+} from "@react-google-maps/api";
+import axios from "axios";
 
-import React, { useState } from "react";
-import { GoogleMap, InfoWindow, Marker, useLoadScript } from "@react-google-maps/api";
-
-const markers = [
-  {
-    id: 1,
-    name: "Chemudugunta",
-    position: { lat: 14.3777, lng: 79.9291 },
-  },
-  {
-    id: 2,
-    name: "Kakutur",
-    position: { lat: 14.3605, lng: 79.9291 },
-  },
-  {
-    id: 3,
-    name: "Kumkumpudi",
-    position: { lat: 14.3785, lng: 79.9137 },
-  },
-  {
-    id: 2,
-    name: "Kakutur",
-    position: { lat: 14.3605, lng: 79.9291 },
-  },
-  {
-    id: 2,
-    name: "Kakutur",
-    position: { lat: 14.3605, lng: 79.9291 },
-  },
-  {
-    id: 2,
-    name: "Kakutur",
-    position: { lat: 14.3605, lng: 79.9291 },
-  },
-  {
-    id: 2,
-    name: "Kakutur",
-    position: { lat: 14.3605, lng: 79.9291 },
-  },
-  {
-    id: 2,
-    name: "Kakutur",
-    position: { lat: 14.3605, lng: 79.9291 },
-  },
-  {
-    id: 2,
-    name: "Kakutur",
-    position: { lat: 14.3605, lng: 79.9291 },
-  },
-];
-
-function Map() {
+function Map(props) {
+  const { markers, color } = props;
+  console.log(markers);
   const [activeMarker, setActiveMarker] = useState(null);
 
+  let locations = [];
+  for (let i of markers) {
+    locations.push(i.position);
+  }
+  console.log(locations);
   const handleActiveMarker = (marker) => {
     if (marker === activeMarker) {
       return;
@@ -82,17 +46,47 @@ function Map() {
     map.fitBounds(bounds);
   };
 
+  // var service = new window.google.maps.DistanceMatrixService();
+  // service.getDistanceMatrix(
+  //   {
+  //     origins: locations,
+  //     destinations: locations,
+  //     travelMode: "DRIVING",
+  //     // unitSystem: google.maps.UnitSystem.METRIC,
+  //     // avoidHighways: false,
+  //     // avoidTolls: false
+  //   },
+  //   (res) => {
+  //     console.log(res);
+  //   }
+  // );
+
   return (
     <GoogleMap
       onLoad={handleOnLoad}
       onClick={() => setActiveMarker(null)}
-      mapContainerStyle={{ width: "80vw", height: "80vh", margin:100 }}
+      mapContainerStyle={{ width: "80vw", height: "80vh", margin: 100 }}
       zoom={12}
     >
+      <DistanceMatrixService
+        options={{
+          destinations: locations,
+          origins: locations,
+          travelMode: "DRIVING",
+        }}
+        callback={(response) => {
+          console.log(response);
+        }}
+      />
       {markers.map(({ id, name, position }) => (
         <Marker
           key={id}
           position={position}
+          title={id + "." + name}
+          icon={{
+            url: `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
+            scaledSize: new window.google.maps.Size(40, 40),
+          }}
           onClick={() => handleActiveMarker(id)}
         >
           {activeMarker === id ? (
@@ -106,13 +100,39 @@ function Map() {
   );
 }
 
-const Maps = () => {
+const Maps = (props) => {
+  // const {markerDonors , markerHospitals} = props;
+  // if(props.markerDonors)
+  // markers
+  // console.log(markerDonors, markerHospitals)
+  const { backend } = props;
 
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAP2XSU0zxJBEQGhwVKQul5MIxLugThY1w" // Add your API key
+    googleMapsApiKey: "AIzaSyAP2XSU0zxJBEQGhwVKQul5MIxLugThY1w", // Add your API key
   });
 
-  return isLoaded ? <Map /> : null;
-}
+  // var markers=[];
+
+  const [activeMarker, setActiveMarker] = useState([]);
+
+  useEffect(() => {
+      axios
+        .get(`http://localhost:5000/getMarkers?type=${backend}`)
+        .then((res) => {
+          setActiveMarker(JSON.parse(res.data)["markers"]);
+
+          console.log("flask response ", res.data);
+          // setActiveMarker(res.markers)
+        })
+        .catch((err) => {});
+  }, []);
+
+  return isLoaded
+    ? activeMarker.length > 0 && (<>
+        <h2 style={{marginLeft:"50vw",marginBottom:15,padding:0,color:props.color}}>{props.backend}</h2>
+        <Map markers={activeMarker} color={props.color} /></>
+      )
+    : "loading";
+};
 
 export default Maps;

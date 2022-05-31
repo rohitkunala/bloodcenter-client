@@ -211,8 +211,8 @@ export default function SignUp() {
                     <MenuItem value="Sportello Presto">
                       Sportello Presto
                     </MenuItem>
-                    <MenuItem value="Ganga bhavani temple Kanuparthipadu">
-                      Ganga bhavani temple Kanuparthipadu
+                    <MenuItem value="Ganga Bhavani Temple, Kanuparthipadu">
+                    Ganga Bhavani Temple, Kanuparthipadu
                     </MenuItem>
                     <MenuItem value="Ambapuram">Ambapuram</MenuItem>
                     <MenuItem value="Akkacheruvupadu">Akkacheruvupadu</MenuItem>
