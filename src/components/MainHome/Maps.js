@@ -26,8 +26,12 @@ import axios from "axios";
 function Map(props) {
   const { markers, color } = props;
   console.log(markers);
-  const [activeMarker, setActiveMarker] = useState(null);
 
+  const [activeMarker, setActiveMarker] = useState(null);
+  const [distances, setDistances] = useState([]);
+  const [orderedDistances, setOrderedDistances] = useState([]);
+
+  console.log(props);
   let locations = [];
   for (let i of markers) {
     locations.push(i.position);
@@ -46,20 +50,39 @@ function Map(props) {
     map.fitBounds(bounds);
   };
 
-  // var service = new window.google.maps.DistanceMatrixService();
-  // service.getDistanceMatrix(
-  //   {
-  //     origins: locations,
-  //     destinations: locations,
-  //     travelMode: "DRIVING",
-  //     // unitSystem: google.maps.UnitSystem.METRIC,
-  //     // avoidHighways: false,
-  //     // avoidTolls: false
-  //   },
-  //   (res) => {
-  //     console.log(res);
-  //   }
-  // );
+  var service = new window.google.maps.DistanceMatrixService();
+  service.getDistanceMatrix(
+    {
+      origins: locations,
+      destinations: locations,
+      travelMode: "DRIVING",
+      // unitSystem: google.maps.UnitSystem.METRIC,
+      // avoidHighways: false,
+      // avoidTolls: false
+    },
+    (res) => {
+      console.log("distance vector matrix res :",res);
+      let tmpDistances = []
+      let ordDistances = []
+
+      const {rows} = res;
+      for(let row=0; row<rows.length; row++){
+        const {elements} = rows[row];
+        let tmpArr = [];
+        for(let ele=0; ele<elements.length; ele++){
+          tmpArr.push(elements[ele]["distance"]["value"])
+        } 
+        tmpDistances.push(tmpArr);
+        let tmp = [...tmpArr];
+        tmp.sort((a,b)=>a-b);
+        // console.log("ordered tmp :",tmpArr,tmp);
+        ordDistances.push(tmp);
+      } 
+      setDistances(tmpDistances);
+      setOrderedDistances(ordDistances);
+      console.log("our array tmp, ord :",tmpDistances,ordDistances)
+    }
+  );
 
   return (
     <GoogleMap
@@ -116,23 +139,40 @@ const Maps = (props) => {
   const [activeMarker, setActiveMarker] = useState([]);
 
   useEffect(() => {
-      axios
-        .get(`http://localhost:5000/getMarkers?type=${backend}`)
-        .then((res) => {
-          setActiveMarker(JSON.parse(res.data)["markers"]);
+    axios
+      .get(`http://localhost:5000/getMarkers?type=${backend}`)
+      .then((res) => {
+        setActiveMarker(JSON.parse(res.data)["markers"]);
 
-          console.log("flask response ", res.data);
-          // setActiveMarker(res.markers)
-        })
-        .catch((err) => {});
+        console.log("flask response ", res.data);
+        // setActiveMarker(res.markers)
+      })
+      .catch((err) => {});
   }, []);
 
-  return isLoaded
-    ? activeMarker.length > 0 && (<>
-        <h2 style={{marginLeft:"50vw",marginBottom:15,padding:0,color:props.color}}>{props.backend}</h2>
-        <Map markers={activeMarker} color={props.color} /></>
-      )
-    : "loading";
+  return isLoaded ? (
+    activeMarker.length > 0 ? (
+      <>
+        <h2
+          style={{
+            marginLeft: "50vw",
+            marginBottom: 15,
+            padding: 0,
+            color: props.color,
+          }}
+        >
+          {props.backend}
+        </h2>
+        <Map markers={activeMarker} color={props.color} />
+      </>
+    ) : (
+      <h1>
+        No {backend} {backend != "hospital" && "donor"} registered
+      </h1>
+    )
+  ) : (
+    <h1>loading</h1>
+  );
 };
 
 export default Maps;
