@@ -127,6 +127,7 @@ body{
   position: relative;
    display: flex;  
  flex-wrap: wrap;
+ justify-content: space-between;
   bottom: 10px;
   padding-top: 80px;
 }

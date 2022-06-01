@@ -89,9 +89,9 @@ export const FilteringTable = (props) => {
                       {headerGroup.headers.map((column) => (
                         <th {...column.getHeaderProps()}>
                           {column.render("Header")}
-                          <div>
+                          {/* <div> */}
                             {column.canFilter ? column.render("Filter") : null}
-                          </div>
+                          {/* </div> */}
                         </th>
                       ))}
                     </tr>
