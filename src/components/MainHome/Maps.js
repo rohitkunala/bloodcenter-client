@@ -33,6 +33,9 @@ function Map(props) {
   const [activeMarker, setActiveMarker] = useState(null);
   const [distances, setDistances] = useState([]);
   const [orderedDistances, setOrderedDistances] = useState([]);
+  const [nearestMarker, setNearestMarker] = useState({});
+
+  const bloodCenterPosition = { lat: 14.4155, lng: 79.9587};
 
   let locations = [];
   let obj={};
@@ -52,23 +55,37 @@ function Map(props) {
   const handleOnLoad = (map) => {
     const bounds = new window.google.maps.LatLngBounds();
     markers.forEach(({ position }) => bounds.extend(position));
+    bounds.extend(bloodCenterPosition);
     map.fitBounds(bounds);
   };
 
-  // var service = new window.google.maps.DistanceMatrixService();
-  // service.getDistanceMatrix(
-  //   {
-  //     origins: locations,
-  //     destinations: locations,
-  //     travelMode: "DRIVING",
-  //     // unitSystem: google.maps.UnitSystem.METRIC,
-  //     // avoidHighways: false,
-  //     // avoidTolls: false
-  //   },
-  //   (res) => {
-  //     console.log(res);
-  //   }
-  // );
+  var service2 = new window.google.maps.DistanceMatrixService();
+  service2.getDistanceMatrix(
+    {
+      origins: [bloodCenterPosition],
+      destinations: locations,
+      travelMode: "DRIVING",
+      // unitSystem: google.maps.UnitSystem.METRIC,
+      // avoidHighways: false,
+      // avoidTolls: false
+    },
+    (res) => {
+      console.log("service2 is :",res);
+      let min = 0 , minDist = 10000000;
+      const arr = res.rows[0].elements;
+      for(let i=0; i<arr.length; i++){
+        let tmp = arr[i].distance.value;
+        if( tmp < minDist)
+        {
+          min = i;
+          minDist = tmp;
+        }
+      }
+      // console.log("This is the min dist ",min,minDist,markers[min])
+      setNearestMarker(markers[min]);
+    }
+  );
+
   var service = new window.google.maps.DistanceMatrixService();
   console.log("locations",locations)
    service.getDistanceMatrix(
@@ -128,6 +145,8 @@ function Map(props) {
    );
 
   return (
+    <>
+    <h2>Nearest marker is :<span style={{color:"rgb(135,206,250)"}}>{nearestMarker?.name}</span></h2>
     <GoogleMap
       onLoad={handleOnLoad}
       onClick={() => setActiveMarker(null)}
@@ -164,7 +183,7 @@ function Map(props) {
       ))}
       <Marker
       key={0}
-      position={{ lat: 14.4155, lng: 79.9587}}
+      position={bloodCenterPosition}
       title={"0.vedayapalem"}
       icon={{
         url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
@@ -181,6 +200,7 @@ function Map(props) {
       {/* <button className="detailsbutton" >Details</button> */}
       <TemporaryDrawer tabledetails={distances} tabledetails2={orderedDistances}/>
     </GoogleMap>
+    </>
   );
 }
 
