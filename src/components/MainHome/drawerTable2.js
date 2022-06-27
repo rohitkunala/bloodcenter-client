@@ -36,7 +36,7 @@ export default function CustomizedTables2(props) {
     <>
      
     <h5>Optimal Location for fixed facility center :  <span style={{color:'#21b6ae',fontSize:26}}>
-    {details[0][0] && details[0][0]}
+    {details[0][details[0].length-1] && details[0][details[0].length-1]}
     </span></h5>
     
     <TableContainer component={Paper}>
@@ -44,10 +44,10 @@ export default function CustomizedTables2(props) {
         <TableBody>
           {details.map((row) => (
             <StyledTableRow key={row[0]}>
-              {row.map((detail) => (
-              // <StyledTableCell component="th" scope="row">
-              //   {row.name}
-              // </StyledTableCell>
+              <StyledTableCell component="th" scope="row">
+                {row[row.length-1]}
+              </StyledTableCell>
+              {row.slice(0,row.length-1).map((detail) => (
               <StyledTableCell align="center">{detail}</StyledTableCell>))}
             </StyledTableRow>
           ))}

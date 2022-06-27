@@ -65,6 +65,7 @@ export default function VerticalTabs() {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
+    console.log("newValue ",newValue)
     setValue(newValue);
   };
 

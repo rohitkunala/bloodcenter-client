@@ -26,13 +26,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   // hide last border
 }));
 
-
-
 export default function CustomizedTables(props) {
+  console.log("props :",props)
   const details=props.details
   let cols=[]
   for(let i=0;i<details.length;i++){
-    cols.push(details[i][0])
+    cols.push(details[i][details.length])
   }
   console.log("cols",cols)
   return (
@@ -47,11 +46,11 @@ export default function CustomizedTables(props) {
         <TableBody>
           {details.map((row) => (
             <StyledTableRow key={row[0]}>
-              {row.map((detail) => (
-              // <StyledTableCell component="th" scope="row">
-              //   {row.name}
-              // </StyledTableCell>
-              <StyledTableCell align="center">{detail}</StyledTableCell>))}
+              <StyledTableCell component="th" scope="row">
+                {row[row.length-1]}
+              </StyledTableCell>
+              {row.slice(0,row.length-1).map((detail) => (
+              <StyledTableCell align="center">{detail}</StyledTableCell>)) }
             </StyledTableRow>
           ))}
         </TableBody>

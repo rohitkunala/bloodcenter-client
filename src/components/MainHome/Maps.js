@@ -106,9 +106,11 @@ function Map(props) {
        for(let row=0; row<rows.length; row++){
          const {elements} = rows[row];
          let tmpArr = [];
+        //  console.log("row , obj[row] ",row,obj[row])
          for(let ele=0; ele<elements.length; ele++){
            tmpArr.push(elements[ele]["distance"]["value"])
          } 
+         tmpArr.push(obj[row])
          tmpDistances.push(tmpArr);
          let tmp = [...tmpArr];
          tmp.sort((a,b)=>a-b);
@@ -116,13 +118,14 @@ function Map(props) {
          // console.log("ordered tmp :",tmpArr,tmp);
          ordDistances.push(tmp);
        } 
-       for (let s=0;s<tmpDistances.length;s++){
-        tmpDistances[s].unshift(obj[s])
-       }
+      //  for (let s=0;s<tmpDistances.length;s++){
+      //   tmpDistances[s].unshift(obj[s])
+      //  }
+       console.log("distances are :",tmpDistances)
        var n= ordDistances[0].length
        
        ordDistances=ordDistances.sort((a,b) => { 
-        console.log("a,b",a,b)
+        // console.log("a,b",a,b)
        let i = 0; 
        while(i++<n){
        if(a[i]>b[i])
@@ -132,9 +135,10 @@ function Map(props) {
        }
        return 0;
        })
-       for (let s=0;s<ordDistances.length;s++){
-        ordDistances[s].unshift(obj[s])
-       }
+       console.log("this is ordDistance before unshift :",ordDistances)
+      //  for (let s=0;s<ordDistances.length;s++){
+      //   ordDistances[s].unshift(obj[s])
+      //  }
       console.log("this is orddis",ordDistances)
        
        setDistances(tmpDistances);
