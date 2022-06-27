@@ -20,14 +20,68 @@ import {
   Marker,
   useLoadScript,
   DistanceMatrixService,
+  DirectionsRenderer
 } from "@react-google-maps/api";
 import axios from "axios";
 import "./Styles/mainpage.css";
-import Button from '@mui/material/Button';
-import TemporaryDrawer from "./drawer"
+import Button from "@mui/material/Button";
+import TemporaryDrawer from "./drawer";
 
+class MapDirectionsRenderer extends React.Component {
+  state = {
+    directions: null,
+    error: null
+  };
+
+  componentDidMount() {
+    const { places, travelMode } = this.props;
+    
+    const waypoints = places.map(p =>({
+        location: {lat: p.lat, lng:p.lng},
+        stopover: true
+    }))
+    const origin = waypoints.shift().location;
+    const destination = waypoints.pop().location;
+    
+    
+
+    const directionsService = new window.google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin: origin,
+        destination: destination,
+        travelMode: travelMode,
+        waypoints: waypoints
+      },
+      (result, status) => {
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          this.setState({
+            directions: result
+          });
+        } else {
+          this.setState({ error: result });
+        }
+      }
+    );
+  }
+
+  render() {
+    if (this.state.error) {
+      return <h1>{this.state.error}</h1>;
+    }
+    return (this.state.directions && <DirectionsRenderer directions={this.state.directions} />)
+  }
+}
 
 function Map(props) {
+  // useEffect(() =>{
+  //   if(props.backend === "fixed"){
+  //     setNearestMarker(getNextNearMarker(bloodCenterPosition))
+  //   }
+  //   else if(props.backend === "mobile"){
+  //     // for()
+  //   }
+  // },[])
   const { markers, color } = props;
   console.log(markers);
   const [activeMarker, setActiveMarker] = useState(null);
@@ -35,16 +89,18 @@ function Map(props) {
   const [orderedDistances, setOrderedDistances] = useState([]);
   const [nearestMarker, setNearestMarker] = useState({});
 
-  const bloodCenterPosition = { lat: 14.4155, lng: 79.9587};
+  const [mBFOrderList, setMBFOrderList] = useState([]);
+
+  const bloodCenterPosition = { lat: 14.4155, lng: 79.9587 };
 
   let locations = [];
-  let obj={};
-  let idx=0
+  let obj = {};
+  let idx = 0;
   for (let i of markers) {
     locations.push(i.position);
-     obj[idx++]=i.name
+    obj[idx++] = i.name;
   }
-  console.log(locations);
+  console.log("locations , obj ", locations, obj);
   const handleActiveMarker = (marker) => {
     if (marker === activeMarker) {
       return;
@@ -59,10 +115,92 @@ function Map(props) {
     map.fitBounds(bounds);
   };
 
+  // const getNextNearMarker = (source) => {
+  // (() => {
+  let tmpPath = [{ id: 0, name: "Vedayapalem", position: bloodCenterPosition }];
   var service2 = new window.google.maps.DistanceMatrixService();
-  service2.getDistanceMatrix(
+  for (let i = 0; i <= locations.length; i++) {
+    // () => {
+    service2.getDistanceMatrix(
+      {
+        origins: [tmpPath[tmpPath.length - 1].position],
+        destinations: locations,
+        travelMode: "DRIVING",
+        // unitSystem: google.maps.UnitSystem.METRIC,
+        // avoidHighways: false,
+        // avoidTolls: false
+      },
+      (res) => {
+        console.log("service2 is :", res);
+        let min = 0,
+          minDist = 10000000;
+        let arr = res?.rows[0]?.elements;
+        for (let i = 0; i < arr.length; i++) {
+          let tmp = arr[i].distance.value;
+          if (tmp < minDist) {
+            min = i;
+            minDist = tmp;
+          }
+        }
+        // console.log("This is the min dist ",min,minDist,markers[min])
+        tmpPath.push(markers[min]);
+
+        if (locations.length == tmpPath.length) {
+          console.log("its mobile , MBFOrderList :", tmpPath);
+          if (props.backend === "fixed") {
+            setNearestMarker(tmpPath[1]);
+            return;
+          }
+          setMBFOrderList(tmpPath);
+          return;
+        }
+      }
+    );
+    // };
+    // sleep(1000);
+    while (
+      tmpPath[tmpPath.length - 1]?.position ==
+      tmpPath[tmpPath.length - 2]?.position
+    ) {}
+  }
+
+  // var directionsRenderer = new window.google.maps.DirectionsRenderer();
+  // const dR = {
+  //   origin: bloodCenterPosition,
+  //   destination: bloodCenterPosition,
+  //   waypoints: [
+  //     {
+  //       location: locations[0],
+  //       stopover: true,
+  //     },
+  //     {
+  //       location: locations[1],
+  //       stopover: true,
+  //     },
+  //     {
+  //       location: locations[2],
+  //       stopover: true,
+  //     },
+  //   ],
+  //   provideRouteAlternatives: false,
+  //   travelMode: "DRIVING",
+  //   // drivingOptions: {
+  //   //   departureTime: new Date(/* now, or future date */),
+  //   //   trafficModel: 'pessimistic'
+  //   // },
+  //   unitSystem: window.google.maps.UnitSystem.IMPERIAL,
+  // };
+  // var map = new google.maps.Map(document.getElementById("map"), dR);
+  // directionsRenderer.setMap(map);
+
+  // if(props.backend === "mobile"){
+  // })();
+
+  var service = new window.google.maps.DistanceMatrixService();
+  console.log("locations", locations);
+  service.getDistanceMatrix(
     {
-      origins: [bloodCenterPosition],
+      origins: locations,
       destinations: locations,
       travelMode: "DRIVING",
       // unitSystem: google.maps.UnitSystem.METRIC,
@@ -70,140 +208,128 @@ function Map(props) {
       // avoidTolls: false
     },
     (res) => {
-      console.log("service2 is :",res);
-      let min = 0 , minDist = 10000000;
-      const arr = res.rows[0].elements;
-      for(let i=0; i<arr.length; i++){
-        let tmp = arr[i].distance.value;
-        if( tmp < minDist)
-        {
-          min = i;
-          minDist = tmp;
-        }
-      }
-      // console.log("This is the min dist ",min,minDist,markers[min])
-      setNearestMarker(markers[min]);
-    }
-  );
+      console.log("distance vector matrix res :", res);
+      let tmpDistances = [];
+      let ordDistances = [];
 
-  var service = new window.google.maps.DistanceMatrixService();
-  console.log("locations",locations)
-   service.getDistanceMatrix(
-     {
-       origins: locations,
-       destinations: locations,
-       travelMode: "DRIVING",
-       // unitSystem: google.maps.UnitSystem.METRIC,
-       // avoidHighways: false,
-       // avoidTolls: false
-     },
-     (res) => {
-       console.log("distance vector matrix res :",res);
-       let tmpDistances = []
-       let ordDistances = []
-
-       const {rows} = res;
-       for(let row=0; row<rows.length; row++){
-         const {elements} = rows[row];
-         let tmpArr = [];
+      const { rows } = res;
+      for (let row = 0; row < rows.length; row++) {
+        const { elements } = rows[row];
+        let tmpArr = [];
         //  console.log("row , obj[row] ",row,obj[row])
-         for(let ele=0; ele<elements.length; ele++){
-           tmpArr.push(elements[ele]["distance"]["value"])
-         } 
-         tmpArr.push(obj[row])
-         tmpDistances.push(tmpArr);
-         let tmp = [...tmpArr];
-         tmp.sort((a,b)=>a-b);
+        for (let ele = 0; ele < elements.length; ele++) {
+          tmpArr.push(elements[ele]["distance"]["value"]);
+        }
+        tmpArr.push(obj[row]);
+        tmpDistances.push(tmpArr);
+        let tmp = [...tmpArr];
+        tmp.sort((a, b) => a - b);
         //  console.log("temp, obj",tmp,obj[row])
-         // console.log("ordered tmp :",tmpArr,tmp);
-         ordDistances.push(tmp);
-       } 
+        // console.log("ordered tmp :",tmpArr,tmp);
+        ordDistances.push(tmp);
+      }
       //  for (let s=0;s<tmpDistances.length;s++){
       //   tmpDistances[s].unshift(obj[s])
       //  }
-       console.log("distances are :",tmpDistances)
-       var n= ordDistances[0].length
-       
-       ordDistances=ordDistances.sort((a,b) => { 
+      console.log("distances are :", tmpDistances);
+      var n = ordDistances[0].length;
+
+      ordDistances = ordDistances.sort((a, b) => {
         // console.log("a,b",a,b)
-       let i = 0; 
-       while(i++<n){
-       if(a[i]>b[i])
-       return 1;
-       else if(a[i]<b[i])
-       return -1;
-       }
-       return 0;
-       })
-       console.log("this is ordDistance before unshift :",ordDistances)
+        let i = 0;
+        while (i++ < n) {
+          if (a[i] > b[i]) return 1;
+          else if (a[i] < b[i]) return -1;
+        }
+        return 0;
+      });
+      console.log("this is ordDistance before unshift :", ordDistances);
       //  for (let s=0;s<ordDistances.length;s++){
       //   ordDistances[s].unshift(obj[s])
       //  }
-      console.log("this is orddis",ordDistances)
-       
-       setDistances(tmpDistances);
-       setOrderedDistances(ordDistances);
-       console.log("our array tmp, ord :",tmpDistances,ordDistances)
+      console.log("this is orddis", ordDistances);
 
-     }
-   );
+      setDistances(tmpDistances);
+      setOrderedDistances(ordDistances);
+      console.log("our array tmp, ord :", tmpDistances, ordDistances);
+    }
+  );
 
   return (
     <>
-    <h2>Nearest marker is :<span style={{color:"rgb(135,206,250)"}}>{nearestMarker?.name}</span></h2>
-    <GoogleMap
-      onLoad={handleOnLoad}
-      onClick={() => setActiveMarker(null)}
-      mapContainerStyle={{ width: "60vw", height: "75vh", marginLeft:"14vw",marginRight:"14vh" }}
-      zoom={12}
-    >
-      <DistanceMatrixService
-        options={{
-          destinations: locations,
-          origins: locations,
-          travelMode: "DRIVING",
+      <h2>
+        Nearest marker is :
+        <span style={{ color: "rgb(135,206,250)" }}>{nearestMarker?.name}</span>
+      </h2>
+      <GoogleMap
+        onLoad={handleOnLoad}
+        onClick={() => setActiveMarker(null)}
+        mapContainerStyle={{
+          width: "60vw",
+          height: "75vh",
+          marginLeft: "14vw",
+          marginRight: "14vh",
         }}
-        callback={(response) => {
-          console.log(response);
-        }}
-      />
-      {markers.map(({ id, name, position }) => (
+        zoom={11}
+      >
+        {props.backend === "fixed" && (
+          <DistanceMatrixService
+            options={{
+              destinations: locations,
+              origins: locations,
+              travelMode: "DRIVING",
+            }}
+            callback={(response) => {
+              console.log(response);
+            }}
+          />
+        )}
+        {props.backend === "mobile" && (
+          <MapDirectionsRenderer
+            places={locations}
+            travelMode="DRIVING"
+          />
+        )}
+        {markers.map(({ id, name, position }) => (
+          <Marker
+            key={id}
+            position={position}
+            title={id + "." + name}
+            icon={{
+              url: `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
+              scaledSize: new window.google.maps.Size(40, 40),
+            }}
+            onClick={() => handleActiveMarker(id)}
+          >
+            {activeMarker === id ? (
+              <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+                <div>{name}</div>
+              </InfoWindow>
+            ) : null}
+          </Marker>
+        ))}
         <Marker
-          key={id}
-          position={position}
-          title={id + "." + name}
+          key={0}
+          position={bloodCenterPosition}
+          title={"0.vedayapalem"}
           icon={{
-            url: `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
+            url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
             scaledSize: new window.google.maps.Size(40, 40),
           }}
-          onClick={() => handleActiveMarker(id)}
+          onClick={() => handleActiveMarker(0)}
         >
-          {activeMarker === id ? (
-            <InfoWindow onCloseClick={() => setActiveMarker(null)}>
-              <div>{name}</div>
-            </InfoWindow>
-          ) : null}
-        </Marker>
-      ))}
-      <Marker
-      key={0}
-      position={bloodCenterPosition}
-      title={"0.vedayapalem"}
-      icon={{
-        url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
-        scaledSize: new window.google.maps.Size(40, 40),
-      }}
-      onClick={() => handleActiveMarker(0)}
-      >
           {activeMarker === 0 ? (
             <InfoWindow onCloseClick={() => setActiveMarker(null)}>
               <div>vedayapalem</div>
             </InfoWindow>
           ) : null}
-      </Marker>
-      {/* <button className="detailsbutton" >Details</button> */}
-      <TemporaryDrawer tabledetails={distances} tabledetails2={orderedDistances}/>
-    </GoogleMap>
+        </Marker>
+        {/* <button className="detailsbutton" >Details</button> */}
+        <TemporaryDrawer
+          tabledetails={distances}
+          tabledetails2={orderedDistances}
+        />
+      </GoogleMap>
     </>
   );
 }
@@ -224,15 +350,15 @@ const Maps = (props) => {
   const [activeMarker, setActiveMarker] = useState([]);
 
   useEffect(() => {
-      axios
-        .get(`http://localhost:5000/getMarkers?type=${backend}`)
-        .then((res) => {
-          setActiveMarker(JSON.parse(res.data)["markers"]);
+    axios
+      .get(`http://localhost:5000/getMarkers?type=${backend}`)
+      .then((res) => {
+        setActiveMarker(JSON.parse(res.data)["markers"]);
 
-          console.log("flask response ", res.data);
-          // setActiveMarker(res.markers)
-        })
-        .catch((err) => {});
+        console.log("flask response ", res.data);
+        // setActiveMarker(res.markers)
+      })
+      .catch((err) => {});
   }, []);
 
   return isLoaded ? (
@@ -240,16 +366,16 @@ const Maps = (props) => {
       <>
         <h2
           style={{
-            margin:0,
-            fontSize:35,
+            margin: 0,
+            fontSize: 35,
             padding: 0,
-            textAlign:"center",
+            textAlign: "center",
             fontFamily: `"Rokkitt", "serif"`,
           }}
         >
           {props.backend}
         </h2>
-        <Map markers={activeMarker} color={props.color} />
+        <Map markers={activeMarker} color={props.color} backend={backend} />
       </>
     ) : (
       <h1>
