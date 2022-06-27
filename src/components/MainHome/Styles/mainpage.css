@@ -161,8 +161,47 @@ body{
   padding-right: 20px;
   text-align: center;
 }
-
-
+.detailsbutton{
+  position: fixed;
+  top: 650px;
+  left: 775px;
+  color:white ;
+  background-color:#069A8E;
+  border: 0px;
+  font-size: 30px;
+  border-radius: 8px;
+  font-family:"Rokkitt", serif;
+  cursor: pointer;
+}
+.detailsbutton1{
+  color:white ;
+  background-color:#e82f4b;
+  border: 0px;
+  font-size: 20px;
+  border-radius: 8px;
+  font-family:"Rokkitt", serif;
+  cursor: pointer;
+  margin-left: 650px;
+  margin-bottom: 50px;
+}
+.mapheading{
+  background-color:#21b6ae ;
+   width:100vw;
+   height:10vh;
+   color:white;
+   font-family:"Rokkitt", serif;
+   font-size:50px;
+   padding-top:10px;
+   padding-left:30px;
+   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+   margin-bottom: 10px;
+}
+table th, tfoot td {
+  font-size: 7px !important;
+  text-align: center;
+  background-color: #069a8eb8 !important;
+  color: white;
+}
 .footer{
   position: relative;
   /* bottom: 30px; */

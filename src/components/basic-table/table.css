@@ -11,6 +11,7 @@ table th {
   border: 1px solid #ddd;
   padding: 8px;
   min-width: 200px !important;
+  text-align: center;
 }
 
 table tr:nth-child(even) {
@@ -22,7 +23,7 @@ table tr:hover {
 }
 
 table th, tfoot td {
-  font-size: larger !important;
+  font-size: 20px !important;
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;

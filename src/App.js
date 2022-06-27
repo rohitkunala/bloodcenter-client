@@ -13,7 +13,8 @@ import SignUp from "./components/mui-components/SignUp";
 import HospitalDemandForm from "./components/mui-components/HospitalDemandForm";
 import { CustomizedTables as HospitalDemandTable } from "./components/mui-components/HospitalDemandTable";
 
-import Maps from "./components/MainHome/Maps";
+import VerticalTabs from "./components/MainHome/tabs";
+import ClippedDrawer from "./components/MainHome/stupidMUI";
 
 function App() {
   // const markerOptions = {
@@ -170,17 +171,10 @@ function App() {
         <Route path="/bloodCenter" element={<BloodCenter />} />
         <Route path="/all" element={<All />} />
 
-        <Route
-          path="/maps"
-          element={
-            <>
-              <Maps color="red" backend="fixed" />
-              <Maps color="orange" backend="mobile" />
-              <Maps color="blue" backend="hospital" />
-            </>
-          }
-        />
+        
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/maps" element={<VerticalTabs/>} />
+        <Route path="/jsttest" element={<div><ClippedDrawer/></div>} />
         <Route path="/hospitaldemand" element={<HospitalDemandForm />} />
         <Route path="/showhospitaldemand" element={<HospitalDemandTable />} />
       </Routes>

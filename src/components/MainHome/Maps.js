@@ -22,15 +22,24 @@ import {
   DistanceMatrixService,
 } from "@react-google-maps/api";
 import axios from "axios";
+import "./Styles/mainpage.css";
+import Button from '@mui/material/Button';
+import TemporaryDrawer from "./drawer"
+
 
 function Map(props) {
   const { markers, color } = props;
   console.log(markers);
   const [activeMarker, setActiveMarker] = useState(null);
+  const [distances, setDistances] = useState([]);
+  const [orderedDistances, setOrderedDistances] = useState([]);
 
   let locations = [];
+  let obj={};
+  let idx=0
   for (let i of markers) {
     locations.push(i.position);
+     obj[idx++]=i.name
   }
   console.log(locations);
   const handleActiveMarker = (marker) => {
@@ -60,12 +69,69 @@ function Map(props) {
   //     console.log(res);
   //   }
   // );
+  var service = new window.google.maps.DistanceMatrixService();
+  console.log("locations",locations)
+   service.getDistanceMatrix(
+     {
+       origins: locations,
+       destinations: locations,
+       travelMode: "DRIVING",
+       // unitSystem: google.maps.UnitSystem.METRIC,
+       // avoidHighways: false,
+       // avoidTolls: false
+     },
+     (res) => {
+       console.log("distance vector matrix res :",res);
+       let tmpDistances = []
+       let ordDistances = []
+
+       const {rows} = res;
+       for(let row=0; row<rows.length; row++){
+         const {elements} = rows[row];
+         let tmpArr = [];
+         for(let ele=0; ele<elements.length; ele++){
+           tmpArr.push(elements[ele]["distance"]["value"])
+         } 
+         tmpDistances.push(tmpArr);
+         let tmp = [...tmpArr];
+         tmp.sort((a,b)=>a-b);
+        //  console.log("temp, obj",tmp,obj[row])
+         // console.log("ordered tmp :",tmpArr,tmp);
+         ordDistances.push(tmp);
+       } 
+       for (let s=0;s<tmpDistances.length;s++){
+        tmpDistances[s].unshift(obj[s])
+       }
+       var n= ordDistances[0].length
+       
+       ordDistances=ordDistances.sort((a,b) => { 
+        console.log("a,b",a,b)
+       let i = 0; 
+       while(i++<n){
+       if(a[i]>b[i])
+       return 1;
+       else if(a[i]<b[i])
+       return -1;
+       }
+       return 0;
+       })
+       for (let s=0;s<ordDistances.length;s++){
+        ordDistances[s].unshift(obj[s])
+       }
+      console.log("this is orddis",ordDistances)
+       
+       setDistances(tmpDistances);
+       setOrderedDistances(ordDistances);
+       console.log("our array tmp, ord :",tmpDistances,ordDistances)
+
+     }
+   );
 
   return (
     <GoogleMap
       onLoad={handleOnLoad}
       onClick={() => setActiveMarker(null)}
-      mapContainerStyle={{ width: "80vw", height: "80vh", margin: 100 }}
+      mapContainerStyle={{ width: "60vw", height: "75vh", marginLeft:"14vw",marginRight:"14vh" }}
       zoom={12}
     >
       <DistanceMatrixService
@@ -96,6 +162,24 @@ function Map(props) {
           ) : null}
         </Marker>
       ))}
+      <Marker
+      key={0}
+      position={{ lat: 14.4155, lng: 79.9587}}
+      title={"0.vedayapalem"}
+      icon={{
+        url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
+        scaledSize: new window.google.maps.Size(40, 40),
+      }}
+      onClick={() => handleActiveMarker(0)}
+      >
+          {activeMarker === 0 ? (
+            <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+              <div>vedayapalem</div>
+            </InfoWindow>
+          ) : null}
+      </Marker>
+      {/* <button className="detailsbutton" >Details</button> */}
+      <TemporaryDrawer tabledetails={distances} tabledetails2={orderedDistances}/>
     </GoogleMap>
   );
 }
@@ -127,12 +211,30 @@ const Maps = (props) => {
         .catch((err) => {});
   }, []);
 
-  return isLoaded
-    ? activeMarker.length > 0 && (<>
-        <h2 style={{marginLeft:"50vw",marginBottom:15,padding:0,color:props.color}}>{props.backend}</h2>
-        <Map markers={activeMarker} color={props.color} /></>
-      )
-    : "loading";
+  return isLoaded ? (
+    activeMarker.length > 0 ? (
+      <>
+        <h2
+          style={{
+            margin:0,
+            fontSize:35,
+            padding: 0,
+            textAlign:"center",
+            fontFamily: `"Rokkitt", "serif"`,
+          }}
+        >
+          {props.backend}
+        </h2>
+        <Map markers={activeMarker} color={props.color} />
+      </>
+    ) : (
+      <h1>
+        No {backend} {backend != "hospital" && "donor"} registered ☹️
+      </h1>
+    )
+  ) : (
+    <h1>loading</h1>
+  );
 };
 
 export default Maps;
