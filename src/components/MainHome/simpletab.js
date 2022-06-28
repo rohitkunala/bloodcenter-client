@@ -51,7 +51,7 @@ export default function BasicTabs(props) {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Distance Table" {...a11yProps(0)} />
-          <Tab label="Optimal locations" {...a11yProps(1)} />
+          {props.backend=="fixed" && <Tab label="Optimal locations" {...a11yProps(1)} />}
           {/* <Tab label="Item Three" {...a11yProps(2)} /> */}
         </Tabs>
       </Box>

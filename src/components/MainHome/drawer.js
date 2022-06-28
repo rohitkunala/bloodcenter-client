@@ -24,7 +24,7 @@ export default function TemporaryDrawer(props) {
       role="presentation"
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <div><BasicTabs tabledetails={props.tabledetails} tabledetails2={props.tabledetails2}/></div>
+      <div><BasicTabs tabledetails={props.tabledetails} tabledetails2={props.tabledetails2} backend={props.backend}/></div>
       <button  className="detailsbutton1"  onClick={toggleDrawer(anchor, false)}>close</button>
     </Box>
   );

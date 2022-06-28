@@ -29,13 +29,13 @@ import TemporaryDrawer from "./drawer";
 
 class MapDirectionsRenderer extends React.Component {
   state = {
+    ops:null,
     directions: null,
     error: null
   };
 
   componentDidMount() {
-    const { places, travelMode } = this.props;
-    
+    const { places, travelMode , valueformarker} = this.props;
     const waypoints = places.map(p =>({
         location: {lat: p.lat, lng:p.lng},
         stopover: true
@@ -56,6 +56,7 @@ class MapDirectionsRenderer extends React.Component {
       (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           this.setState({
+            ops:valueformarker,
             directions: result
           });
         } else {
@@ -69,7 +70,7 @@ class MapDirectionsRenderer extends React.Component {
     if (this.state.error) {
       return <h1>{this.state.error}</h1>;
     }
-    return (this.state.directions && <DirectionsRenderer directions={this.state.directions} />)
+    return (this.state.directions && <DirectionsRenderer directions={this.state.directions} options={{suppressMarkers:this.state.ops}}  />)
   }
 }
 
@@ -99,6 +100,19 @@ function Map(props) {
   for (let i of markers) {
     locations.push(i.position);
     obj[idx++] = i.name;
+  }
+  let mblocations=[...locations]
+  if(props.backend=="mobile"){
+    for (let i = mblocations.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [mblocations[i], mblocations[j]] = [mblocations[j], mblocations[i]];
+  }
+  }
+  let hoslocations=[]
+  if (props.backend=="hospital"){
+    for (let loc of locations){
+        hoslocations.push([loc,bloodCenterPosition])
+    }
   }
   console.log("locations , obj ", locations, obj);
   const handleActiveMarker = (marker) => {
@@ -147,7 +161,7 @@ function Map(props) {
 
         if (locations.length == tmpPath.length) {
           console.log("its mobile , MBFOrderList :", tmpPath);
-          if (props.backend === "fixed") {
+          if (props.backend === "mobile") {
             setNearestMarker(tmpPath[1]);
             return;
           }
@@ -257,10 +271,10 @@ function Map(props) {
 
   return (
     <>
-      <h2>
+      {/* <h2>
         Nearest marker is :
         <span style={{ color: "rgb(135,206,250)" }}>{nearestMarker?.name}</span>
-      </h2>
+      </h2> */}
       <GoogleMap
         onLoad={handleOnLoad}
         onClick={() => setActiveMarker(null)}
@@ -286,10 +300,20 @@ function Map(props) {
         )}
         {props.backend === "mobile" && (
           <MapDirectionsRenderer
+            places={mblocations}
+            travelMode="DRIVING"
+            valueformarker={false}
+          />
+        )
+        }
+        {props.backend === "hospital" && (
+          hoslocations.map(locations =><MapDirectionsRenderer
             places={locations}
             travelMode="DRIVING"
-          />
-        )}
+            valueformarker={true}
+          />)
+        )
+        }
         {markers.map(({ id, name, position }) => (
           <Marker
             key={id}
@@ -325,10 +349,16 @@ function Map(props) {
           ) : null}
         </Marker>
         {/* <button className="detailsbutton" >Details</button> */}
-        <TemporaryDrawer
+        {props.backend=="fixed" && <TemporaryDrawer
           tabledetails={distances}
           tabledetails2={orderedDistances}
-        />
+          backend={props.backend}
+        />}
+        {props.backend=="mobile" && <TemporaryDrawer
+          tabledetails={distances}
+          tabledetails2={orderedDistances}
+          backend={props.backend}
+        />}
       </GoogleMap>
     </>
   );
