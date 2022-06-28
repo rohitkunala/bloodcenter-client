@@ -20,7 +20,7 @@ import {
   Marker,
   useLoadScript,
   DistanceMatrixService,
-  DirectionsRenderer
+  DirectionsRenderer,
 } from "@react-google-maps/api";
 import axios from "axios";
 import "./Styles/mainpage.css";
@@ -29,21 +29,20 @@ import TemporaryDrawer from "./drawer";
 
 class MapDirectionsRenderer extends React.Component {
   state = {
-    ops:null,
+    ops: null,
     directions: null,
-    error: null
+    error: null,
   };
 
   componentDidMount() {
-    const { places, travelMode , valueformarker} = this.props;
-    const waypoints = places.map(p =>({
-        location: {lat: p.lat, lng:p.lng},
-        stopover: true
-    }))
+    const { places, travelMode, valueformarker } = this.props;
+    console.log("places :", places);
+    const waypoints = places.map((p) => ({
+      location: { lat: p.position.lat, lng: p.position.lng },
+      stopover: true,
+    }));
     const origin = waypoints.shift().location;
     const destination = waypoints.pop().location;
-    
-    
 
     const directionsService = new window.google.maps.DirectionsService();
     directionsService.route(
@@ -51,13 +50,13 @@ class MapDirectionsRenderer extends React.Component {
         origin: origin,
         destination: destination,
         travelMode: travelMode,
-        waypoints: waypoints
+        waypoints: waypoints,
       },
       (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           this.setState({
-            ops:valueformarker,
-            directions: result
+            ops: valueformarker,
+            directions: result,
           });
         } else {
           this.setState({ error: result });
@@ -70,7 +69,14 @@ class MapDirectionsRenderer extends React.Component {
     if (this.state.error) {
       return <h1>{this.state.error}</h1>;
     }
-    return (this.state.directions && <DirectionsRenderer directions={this.state.directions} options={{suppressMarkers:this.state.ops}}  />)
+    return (
+      this.state.directions && (
+        <DirectionsRenderer
+          directions={this.state.directions}
+          options={{ suppressMarkers: this.state.ops }}
+        />
+      )
+    );
   }
 }
 
@@ -88,11 +94,20 @@ function Map(props) {
   const [activeMarker, setActiveMarker] = useState(null);
   const [distances, setDistances] = useState([]);
   const [orderedDistances, setOrderedDistances] = useState([]);
-  const [nearestMarker, setNearestMarker] = useState({});
-
-  const [mBFOrderList, setMBFOrderList] = useState([]);
 
   const bloodCenterPosition = { lat: 14.4155, lng: 79.9587 };
+  const [nearestMarker, setNearestMarker] = useState({
+    id: 0,
+    name: "Vedayapalem",
+    position: bloodCenterPosition,
+  });
+
+  // const [mBFOrderList, setMBFOrderList] = useState([]);
+  // let mBFOrderList = [];
+  const [tmpPath, setTmpPath] = useState([
+    { id: 0, name: "Vedayapalem", position: bloodCenterPosition },
+  ]);
+  const [tmpPathNames, setTmpPathNames] = useState(["Vedayapalem"]);
 
   let locations = [];
   let obj = {};
@@ -101,17 +116,18 @@ function Map(props) {
     locations.push(i.position);
     obj[idx++] = i.name;
   }
-  let mblocations=[...locations]
-  if(props.backend=="mobile"){
-    for (let i = mblocations.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [mblocations[i], mblocations[j]] = [mblocations[j], mblocations[i]];
-  }
-  }
-  let hoslocations=[]
-  if (props.backend=="hospital"){
-    for (let loc of locations){
-        hoslocations.push([loc,bloodCenterPosition])
+
+  // let mblocations=[...locations]
+  // if(props.backend=="mobile"){
+  //   for (let i = mblocations.length - 1; i > 0; i--) {
+  //     const j = Math.floor(Math.random() * (i + 1));
+  //     [mblocations[i], mblocations[j]] = [mblocations[j], mblocations[i]];
+  // }
+  // }
+  let hoslocations = [];
+  if (props.backend == "hospital" && tmpPath.length === locations.length+1) {
+    for (let loc of tmpPath) {
+      hoslocations.push([{position:loc.position}, {position:bloodCenterPosition}]);
     }
   }
   console.log("locations , obj ", locations, obj);
@@ -129,86 +145,55 @@ function Map(props) {
     map.fitBounds(bounds);
   };
 
-  // const getNextNearMarker = (source) => {
-  // (() => {
-  let tmpPath = [{ id: 0, name: "Vedayapalem", position: bloodCenterPosition }];
-  var service2 = new window.google.maps.DistanceMatrixService();
-  for (let i = 0; i <= locations.length; i++) {
-    // () => {
-    service2.getDistanceMatrix(
-      {
-        origins: [tmpPath[tmpPath.length - 1].position],
-        destinations: locations,
-        travelMode: "DRIVING",
-        // unitSystem: google.maps.UnitSystem.METRIC,
-        // avoidHighways: false,
-        // avoidTolls: false
-      },
-      (res) => {
-        console.log("service2 is :", res);
-        let min = 0,
-          minDist = 10000000;
-        let arr = res?.rows[0]?.elements;
-        for (let i = 0; i < arr.length; i++) {
-          let tmp = arr[i].distance.value;
-          if (tmp < minDist) {
-            min = i;
-            minDist = tmp;
+  useEffect(() => {
+    var service2 = new window.google.maps.DistanceMatrixService();
+    const getNextNearMarker = () => {
+      console.log("calling service2 ");
+      console.log("tmpPath are :", tmpPath);
+      console.log("nearestMarker are :", nearestMarker);
+      console.log("locations(destination) are :", locations);
+      service2.getDistanceMatrix(
+        {
+          origins: [nearestMarker.position],
+          destinations: locations,
+          travelMode: "DRIVING",
+          // unitSystem: google.maps.UnitSystem.METRIC,
+          // avoidHighways: false,
+          // avoidTolls: false
+        },
+        (res) => {
+          console.log("service2 response , tmpPath is :", res, tmpPath);
+          let min = -1,
+            minDist = 10000000;
+          let arr = res?.rows[0]?.elements;
+          for (let i = 0; i < arr.length; i++) {
+            let tmp = arr[i].distance.value;
+            // console.log(
+            //   "tmpPathNames.includes(obj[i]), obj[i], tmpPathNames :",
+            //   tmpPathNames.includes(obj[i]),
+            //   obj[i],tmpPathNames
+            // );
+            if (!tmpPathNames.includes(obj[i]) && tmp < minDist) {
+              min = i;
+              minDist = tmp;
+            }
+          }
+          // console.log("This is the min dist ",min,minDist,markers[min])
+          if (min !== -1) {
+            setTmpPath([...tmpPath, markers[min]]);
+            setTmpPathNames([...tmpPathNames, markers[min].name]);
+            setNearestMarker(markers[min]);
+            console.log(
+              "tmpPathNames,setNearestMarker :",
+              tmpPathNames,
+              markers[min]
+            );
           }
         }
-        // console.log("This is the min dist ",min,minDist,markers[min])
-        tmpPath.push(markers[min]);
-
-        if (locations.length == tmpPath.length) {
-          console.log("its mobile , MBFOrderList :", tmpPath);
-          if (props.backend === "mobile") {
-            setNearestMarker(tmpPath[1]);
-            return;
-          }
-          setMBFOrderList(tmpPath);
-          return;
-        }
-      }
-    );
-    // };
-    // sleep(1000);
-    while (
-      tmpPath[tmpPath.length - 1]?.position ==
-      tmpPath[tmpPath.length - 2]?.position
-    ) {}
-  }
-
-  // var directionsRenderer = new window.google.maps.DirectionsRenderer();
-  // const dR = {
-  //   origin: bloodCenterPosition,
-  //   destination: bloodCenterPosition,
-  //   waypoints: [
-  //     {
-  //       location: locations[0],
-  //       stopover: true,
-  //     },
-  //     {
-  //       location: locations[1],
-  //       stopover: true,
-  //     },
-  //     {
-  //       location: locations[2],
-  //       stopover: true,
-  //     },
-  //   ],
-  //   provideRouteAlternatives: false,
-  //   travelMode: "DRIVING",
-  //   // drivingOptions: {
-  //   //   departureTime: new Date(/* now, or future date */),
-  //   //   trafficModel: 'pessimistic'
-  //   // },
-  //   unitSystem: window.google.maps.UnitSystem.IMPERIAL,
-  // };
-  // var map = new google.maps.Map(document.getElementById("map"), dR);
-  // directionsRenderer.setMap(map);
-
-  // if(props.backend === "mobile"){
-  // })();
+      );
+    };
+    getNextNearMarker();
+  }, [nearestMarker]);
 
   var service = new window.google.maps.DistanceMatrixService();
   console.log("locations", locations);
@@ -268,6 +253,7 @@ function Map(props) {
       console.log("our array tmp, ord :", tmpDistances, ordDistances);
     }
   );
+  console.log("tmpPathNames , locations", tmpPathNames, locations);
 
   return (
     <>
@@ -298,22 +284,21 @@ function Map(props) {
             }}
           />
         )}
-        {props.backend === "mobile" && (
+        {/* {props.backend === "mobile" && tmpPathNames.length === locations.length + 1 && (
           <MapDirectionsRenderer
-            places={mblocations}
+            places={tmpPath}
             travelMode="DRIVING"
             valueformarker={false}
           />
-        )
-        }
-        {props.backend === "hospital" && (
-          hoslocations.map(locations =><MapDirectionsRenderer
-            places={locations}
-            travelMode="DRIVING"
-            valueformarker={true}
-          />)
-        )
-        }
+        )} */}
+        {props.backend === "hospital" &&
+          hoslocations.map((locations) => (
+            <MapDirectionsRenderer
+              places={locations}
+              travelMode="DRIVING"
+              valueformarker={true}
+            />
+          ))}
         {markers.map(({ id, name, position }) => (
           <Marker
             key={id}
@@ -349,16 +334,30 @@ function Map(props) {
           ) : null}
         </Marker>
         {/* <button className="detailsbutton" >Details</button> */}
-        {props.backend=="fixed" && <TemporaryDrawer
-          tabledetails={distances}
-          tabledetails2={orderedDistances}
-          backend={props.backend}
-        />}
-        {props.backend=="mobile" && <TemporaryDrawer
-          tabledetails={distances}
-          tabledetails2={orderedDistances}
-          backend={props.backend}
-        />}
+        {props.backend == "fixed" && (
+          <TemporaryDrawer
+            tabledetails={distances}
+            tabledetails2={orderedDistances}
+            backend={props.backend}
+          />
+        )}
+        {props.backend === "mobile" &&
+          tmpPathNames.length === locations.length+1 && (
+            <>
+              <MapDirectionsRenderer
+                places={tmpPath}
+                travelMode="DRIVING"
+                valueformarker={false}
+              />
+              {
+                <TemporaryDrawer
+                  tabledetails={distances}
+                  tabledetails2={tmpPathNames.map(name =>{return [name];})}
+                  backend={props.backend}
+                />
+              }
+            </>
+          )}
       </GoogleMap>
     </>
   );
