@@ -1,13 +1,17 @@
 table {
-  font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+  font-family: 'Trebuchet MS' !important;
   border-collapse: collapse;
-  width: 100%;
+  width: 60% !important;
+  max-height: 60% !important;
+  overflow:scroll
 }
 
 table td,
 table th {
   border: 1px solid #ddd;
   padding: 8px;
+  min-width: 200px !important;
+  text-align: center;
 }
 
 table tr:nth-child(even) {
@@ -19,9 +23,10 @@ table tr:hover {
 }
 
 table th, tfoot td {
+  font-size: 20px !important;
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;
-  background-color: #4caf50;
+  background-color: #069a8eb8 !important;
   color: white;
 }

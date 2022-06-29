@@ -1,0 +1,214 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Sacramento&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200&family=Pacifico&family=Rokkitt:wght@700&family=Sacramento&display=swap');
+body{
+  font-family: 'Pacifico', cursive;
+}
+
+.about{
+  font-family: 'IBM Plex Sans', sans-serif;
+ 
+}
+.abouttitle{
+  color: #069A8E;
+}
+.title{
+  display: relative;  
+   position: absolute;
+    width: 15%;
+    height: 25%;
+    left: 30px;
+  }
+
+  .texttyping{
+    position: relative;
+    top: 160px;
+    left: 150px;
+    font-size: 90px;
+    color: #f62443;
+    
+  }
+  .quotetag{
+   font-family: 'Sacramento', cursive;
+   font-size: 40px;
+   color: #069A8E;
+  }
+
+.blob1{
+  display: inline-block;
+  position: relative;
+  left: 750px; 
+   bottom: 480px; 
+}
+.img3{
+  position: absolute;
+  top: 50px;
+  width: 300px;
+  height:225px;
+  left: 1100px;
+}
+.img1{
+  position: absolute;
+  top: 350px;
+  left: 750px;
+}
+
+.blob3{
+  position: relative;
+  bottom: 800px; 
+  right: 200px;
+}
+/* .blob2{
+  position: relative;
+  bottom: 800px; 
+  right: 200px;
+}
+.img2{
+  position: absolute;
+  top: 750px;
+  left: 75px;
+  width: 900px;
+  height: 500px;
+} */
+.blob2{
+  position: relative;
+  bottom: 350px; 
+  right: 200px;
+}
+.img2{
+  position: absolute;
+  top: 1700px;
+  left: 75px;
+  width: 900px;
+  height: 500px;
+}
+.quote3{
+  position: absolute;
+  font-size: 70px;
+  top: 2520px;
+  left: 450px;
+  color: #f62443af;
+  width: 900px;
+  height: 500px;
+}
+.img5{
+  position: absolute;
+  top: 550px;
+  left:1px;
+}
+.quotetag2{
+  width:800px;
+  height:80px;
+  text-align: center;
+  position: absolute;
+  font-family: 'IBM Plex Sans', sans-serif;
+ font-size: 20px;
+ color: #069A8E;
+ top: 800px;
+ left:500px;
+}
+.img4{
+  position: absolute;
+  top:1200px;
+  left: 75px;
+}
+
+.cardbound{
+  padding: 20px;
+  height: 600px;
+  position: relative;
+  color: #069A8E;
+ text-align: center;
+  background-color: #16e2d127;
+  bottom: 300px;
+  border-radius: 30px;
+  font-size: 40px;
+}
+.cards{
+  position: relative;
+   display: flex;  
+ flex-wrap: wrap;
+ justify-content: space-between;
+  bottom: 10px;
+  padding-top: 80px;
+}
+.cardItem{
+  width: 400px;
+  padding-left: 30px;
+}
+
+.faqs{
+  position: relative;
+  padding: 30px;
+  bottom: 260px;
+  left: 180px;
+  border-radius: 15px;
+  /* width: 550px;
+  height:800px; */
+}
+
+.details{
+  position: absolute;
+  top: 1850px;
+  left: 860px;
+  background-color: #069a8e39;
+  border-radius: 50px;
+  width: 500px;
+  height:400px;
+  padding-top: 80px;
+  padding-left: 20px;
+  font-size: 30px;
+  color: #ed739af4;
+  padding-right: 20px;
+  text-align: center;
+}
+.detailsbutton{
+  position: fixed;
+  top: 650px;
+  left: 775px;
+  color:white ;
+  background-color:#069A8E;
+  border: 0px;
+  font-size: 30px;
+  border-radius: 8px;
+  font-family:"Rokkitt", serif;
+  cursor: pointer;
+}
+.detailsbutton1{
+  color:white ;
+  background-color:#e82f4b;
+  border: 0px;
+  font-size: 20px;
+  border-radius: 8px;
+  font-family:"Rokkitt", serif;
+  cursor: pointer;
+  margin-left: 650px;
+  margin-bottom: 50px;
+}
+.mapheading{
+  background-color:#21b6ae ;
+   width:100vw;
+   height:10vh;
+   color:white;
+   font-family:"Rokkitt", serif;
+   font-size:50px;
+   padding-top:10px;
+   padding-left:30px;
+   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+   margin-bottom: 10px;
+}
+table th, tfoot td {
+  font-size: 7px !important;
+  text-align: center;
+  background-color: #069a8eb8 !important;
+  color: white;
+}
+.footer{
+  position: relative;
+  /* bottom: 30px; */
+  height: 250px;
+  color: #43e7d9f4;
+  background-color: #069A8E;
+  text-align: center;
+  padding-top: 90px;
+  font-size: 20px;
+}

@@ -16,6 +16,8 @@ export const GlobalFilter = ({ filter, setFilter }) => {
           onChange(e.target.value);
         }}
       />
+      <br/>
+      <br/>
     </span>
   )
 }

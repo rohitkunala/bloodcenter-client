@@ -9,6 +9,8 @@ import { ColumnFilter } from "./ColumnFilter";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 
+import Paper from "@mui/material/Paper";
+
 export const FilteringTable = (props) => {
   const columns = useMemo(() => COLUMNS, []);
   const data = useMemo(() => props.donors, [props]);
@@ -43,11 +45,17 @@ export const FilteringTable = (props) => {
 
   return (
     <>
-      <Container sx={{ marginTop: 10, marginRight: 25 }}>
-        <div style={{ float: "right", paddingBottom: 10 }}>
+      <Container sx={{ marginTop: 10, margin: 5 }}>
+        <div>
           <Button
             variant="contained"
-            color="success"
+            style={{
+              borderRadius: 35,
+              backgroundColor: "#08ee869c",
+              padding: "5px 9px",
+              fontSize: "15px",
+              fontWeight: "bold",
+            }}
             onClick={() => props.onFetchDonors()}
           >
             Show Donors
@@ -55,58 +63,69 @@ export const FilteringTable = (props) => {
           <Button
             variant="contained"
             color="error"
+            style={{
+              borderRadius: 35,
+              backgroundColor: "#fb05159d",
+              padding: "5px 9px",
+              fontSize: "15px",
+              fontWeight: "bold",
+            }}
             onClick={() => props.handleShow(!props.show)}
           >
             Hide
           </Button>
         </div>
+        <br />
         {/* {show && <CustomizedTables donors={donors} all={true}></CustomizedTables>} */}
         {props.show && (
           <>
             <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-            <table {...getTableProps()}>
-              <thead>
-                {headerGroups.map((headerGroup) => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column) => (
-                      <th {...column.getHeaderProps()}>
-                        {column.render("Header")}
-                        <div>
-                          {column.canFilter ? column.render("Filter") : null}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody {...getTableBodyProps()}>
-                {rows.map((row) => {
-                  prepareRow(row);
-                  return (
-                    <tr {...row.getRowProps()}>
-                      {row.cells.map((cell) => {
-                        return (
-                          <td {...cell.getCellProps()}>
-                            {cell.render("Cell")}
-                          </td>
-                        );
-                      })}
+            <Paper >
+              {/* sx={{width:"100%",overflow:"scroll"}} */}
+              <table {...getTableProps()}>
+                <thead>
+                  {headerGroups.map((headerGroup) => (
+                    <tr {...headerGroup.getHeaderGroupProps()}>
+                      {headerGroup.headers.map((column) => (
+                        <th {...column.getHeaderProps()}>
+                          {column.render("Header")}
+                          {/* <div> */}
+                            {column.canFilter ? column.render("Filter") : null}
+                          {/* </div> */}
+                        </th>
+                      ))}
                     </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot>
-                {footerGroups.map((footerGroup) => (
-                  <tr {...footerGroup.getFooterGroupProps()}>
-                    {footerGroup.headers.map((column) => (
-                      <td {...column.getFooterProps()}>
-                        {column.render("Footer")}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tfoot>
-            </table>
+                  ))}
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                  {rows.map((row) => {
+                    prepareRow(row);
+                    return (
+                      <tr {...row.getRowProps()}>
+                        {row.cells.map((cell) => {
+                          return (
+                            <td {...cell.getCellProps()}>
+                              {cell.render("Cell")}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  {footerGroups.map((footerGroup) => (
+                    <tr {...footerGroup.getFooterGroupProps()}>
+                      {footerGroup.headers.map((column) => (
+                        <td {...column.getFooterProps()}>
+                          {column.render("Footer")}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tfoot>
+              </table>
+            </Paper>
           </>
         )}
       </Container>

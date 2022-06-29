@@ -19,6 +19,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
+    fontFamily:'Trebuchet MS'
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -65,18 +66,30 @@ export function CustomizedTables(props) {
 
   return (
     <>
-      <Container sx={{ marginTop: 10, marginRight: 25 }}>
-        <div style={{ float: "right", paddingBottom: 10 }}>
+      <Container  >
+        <div style={{  paddingBottom: 10 }}>
           <Button
             variant="contained"
-            color="success"
+            style={{
+              borderRadius: 35,
+              backgroundColor: "#08ee869c",
+              padding: "5px 9px",
+              fontSize: "15px",
+              fontWeight:"bold"
+          }} 
             onClick={() => onFetchHospitalDemandTable()}
           >
-            Show Donors
+            Show Demand
           </Button>{" "}
           <Button
             variant="contained"
-            color="error"
+            style={{
+              borderRadius: 35,
+              backgroundColor: "#fb05159d",
+              padding: "5px 9px",
+              fontSize: "15px",
+              fontWeight:"bold"
+          }} 
             onClick={() => setShow(!show)}
           >
             Hide
@@ -90,10 +103,10 @@ export function CustomizedTables(props) {
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">hospitalName</StyledTableCell>
-                  <StyledTableCell align="center">age</StyledTableCell>
-                  <StyledTableCell align="center">bloodGroup</StyledTableCell>
-                  <StyledTableCell align="center">quantity</StyledTableCell>
+                  <StyledTableCell align="center">Hospital Name</StyledTableCell>
+                  <StyledTableCell align="center">Age</StyledTableCell>
+                  <StyledTableCell align="center">Blood Group</StyledTableCell>
+                  <StyledTableCell align="center">Quantity in mL</StyledTableCell>  
                   {props.all && (
                     <StyledTableCell align="center">
                       facilityChoice
