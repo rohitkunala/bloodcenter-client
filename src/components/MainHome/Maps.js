@@ -124,12 +124,6 @@ function Map(props) {
   //     [mblocations[i], mblocations[j]] = [mblocations[j], mblocations[i]];
   // }
   // }
-  let hoslocations = [];
-  if (props.backend == "hospital" && tmpPath.length === locations.length+1) {
-    for (let loc of tmpPath) {
-      hoslocations.push([{position:loc.position}, {position:bloodCenterPosition}]);
-    }
-  }
   console.log("locations , obj ", locations, obj);
   const handleActiveMarker = (marker) => {
     if (marker === activeMarker) {
@@ -145,115 +139,126 @@ function Map(props) {
     map.fitBounds(bounds);
   };
 
+  let hoslocations = [];
+  if (props.backend == "hospital") {
+    for (let loc of locations) {
+      hoslocations.push([
+        { position: loc },
+        { position: bloodCenterPosition },
+      ]);
+    }
+  }
+
   useEffect(() => {
-    var service2 = new window.google.maps.DistanceMatrixService();
-    const getNextNearMarker = () => {
-      console.log("calling service2 ");
-      console.log("tmpPath are :", tmpPath);
-      console.log("nearestMarker are :", nearestMarker);
-      console.log("locations(destination) are :", locations);
-      service2.getDistanceMatrix(
-        {
-          origins: [nearestMarker.position],
-          destinations: locations,
-          travelMode: "DRIVING",
-          // unitSystem: google.maps.UnitSystem.METRIC,
-          // avoidHighways: false,
-          // avoidTolls: false
-        },
-        (res) => {
-          console.log("service2 response , tmpPath is :", res, tmpPath);
-          let min = -1,
-            minDist = 10000000;
-          let arr = res?.rows[0]?.elements;
-          for (let i = 0; i < arr.length; i++) {
-            let tmp = arr[i].distance.value;
-            // console.log(
-            //   "tmpPathNames.includes(obj[i]), obj[i], tmpPathNames :",
-            //   tmpPathNames.includes(obj[i]),
-            //   obj[i],tmpPathNames
-            // );
-            if (!tmpPathNames.includes(obj[i]) && tmp < minDist) {
-              min = i;
-              minDist = tmp;
+    if (props.backend === "mobile") {
+      var service2 = new window.google.maps.DistanceMatrixService();
+      const getNextNearMarker = () => {
+        console.log("calling service2 ");
+        console.log("tmpPath are :", tmpPath);
+        console.log("nearestMarker are :", nearestMarker);
+        console.log("locations(destination) are :", locations);
+        service2.getDistanceMatrix(
+          {
+            origins: [nearestMarker.position],
+            destinations: locations,
+            travelMode: "DRIVING",
+            // unitSystem: google.maps.UnitSystem.METRIC,
+            // avoidHighways: false,
+            // avoidTolls: false
+          },
+          (res) => {
+            console.log("service2 response , tmpPath is :", res, tmpPath);
+            let min = -1,
+              minDist = 10000000;
+            let arr = res?.rows[0]?.elements;
+            for (let i = 0; i < arr.length; i++) {
+              let tmp = arr[i].distance.value;
+              // console.log(
+              //   "tmpPathNames.includes(obj[i]), obj[i], tmpPathNames :",
+              //   tmpPathNames.includes(obj[i]),
+              //   obj[i],tmpPathNames
+              // );
+              if (!tmpPathNames.includes(obj[i]) && tmp < minDist) {
+                min = i;
+                minDist = tmp;
+              }
+            }
+            // console.log("This is the min dist ",min,minDist,markers[min])
+            if (min !== -1) {
+              setTmpPath([...tmpPath, markers[min]]);
+              setTmpPathNames([...tmpPathNames, markers[min].name]);
+              setNearestMarker(markers[min]);
+              console.log(
+                "tmpPathNames,setNearestMarker :",
+                tmpPathNames,
+                markers[min]
+              );
             }
           }
-          // console.log("This is the min dist ",min,minDist,markers[min])
-          if (min !== -1) {
-            setTmpPath([...tmpPath, markers[min]]);
-            setTmpPathNames([...tmpPathNames, markers[min].name]);
-            setNearestMarker(markers[min]);
-            console.log(
-              "tmpPathNames,setNearestMarker :",
-              tmpPathNames,
-              markers[min]
-            );
-          }
-        }
-      );
-    };
-    getNextNearMarker();
+        );
+      };
+      getNextNearMarker();
+    }
   }, [nearestMarker]);
 
-  var service = new window.google.maps.DistanceMatrixService();
-  console.log("locations", locations);
-  service.getDistanceMatrix(
-    {
-      origins: locations,
-      destinations: locations,
-      travelMode: "DRIVING",
-      // unitSystem: google.maps.UnitSystem.METRIC,
-      // avoidHighways: false,
-      // avoidTolls: false
-    },
-    (res) => {
-      console.log("distance vector matrix res :", res);
-      let tmpDistances = [];
-      let ordDistances = [];
+  if (props.backend !== "hospital") {
+    var service = new window.google.maps.DistanceMatrixService();
+    console.log("locations", locations);
+    service.getDistanceMatrix(
+      {
+        origins: locations,
+        destinations: locations,
+        travelMode: "DRIVING",
+        // unitSystem: google.maps.UnitSystem.METRIC,
+        // avoidHighways: false,
+        // avoidTolls: false
+      },
+      (res) => {
+        console.log("distance vector matrix res :", res);
+        let tmpDistances = [];
+        let ordDistances = [];
 
-      const { rows } = res;
-      for (let row = 0; row < rows.length; row++) {
-        const { elements } = rows[row];
-        let tmpArr = [];
-        //  console.log("row , obj[row] ",row,obj[row])
-        for (let ele = 0; ele < elements.length; ele++) {
-          tmpArr.push(elements[ele]["distance"]["value"]);
+        const { rows } = res;
+        for (let row = 0; row < rows.length; row++) {
+          const { elements } = rows[row];
+          let tmpArr = [];
+          //  console.log("row , obj[row] ",row,obj[row])
+          for (let ele = 0; ele < elements.length; ele++) {
+            tmpArr.push(elements[ele]["distance"]["value"]);
+          }
+          tmpArr.push(obj[row]);
+          tmpDistances.push(tmpArr);
+          let tmp = [...tmpArr];
+          tmp.sort((a, b) => a - b);
+          //  console.log("temp, obj",tmp,obj[row])
+          // console.log("ordered tmp :",tmpArr,tmp);
+          ordDistances.push(tmp);
         }
-        tmpArr.push(obj[row]);
-        tmpDistances.push(tmpArr);
-        let tmp = [...tmpArr];
-        tmp.sort((a, b) => a - b);
-        //  console.log("temp, obj",tmp,obj[row])
-        // console.log("ordered tmp :",tmpArr,tmp);
-        ordDistances.push(tmp);
+        
+        var n = ordDistances[0].length;
+        console.log("ordDistances :",ordDistances)
+        ordDistances = ordDistances.sort((a, b) => {
+          let i = 0;
+          while (i++ < n) {
+            console.log("a,b,i :",a,b,i)
+            if (a[i] > b[i]) return 1;
+            else if (a[i] < b[i]) return -1;
+          }
+          return 0;
+        });
+        console.log("this is ordDistance before unshift :", ordDistances);
+        //  for (let s=0;s<ordDistances.length;s++){
+        //   ordDistances[s].unshift(obj[s])
+        //  }
+        console.log("this is orddis", ordDistances);
+
+        setDistances(tmpDistances);
+        setOrderedDistances(ordDistances);
+        console.log("our array tmp, ord :", tmpDistances, ordDistances);
       }
-      //  for (let s=0;s<tmpDistances.length;s++){
-      //   tmpDistances[s].unshift(obj[s])
-      //  }
-      console.log("distances are :", tmpDistances);
-      var n = ordDistances[0].length;
-
-      ordDistances = ordDistances.sort((a, b) => {
-        // console.log("a,b",a,b)
-        let i = 0;
-        while (i++ < n) {
-          if (a[i] > b[i]) return 1;
-          else if (a[i] < b[i]) return -1;
-        }
-        return 0;
-      });
-      console.log("this is ordDistance before unshift :", ordDistances);
-      //  for (let s=0;s<ordDistances.length;s++){
-      //   ordDistances[s].unshift(obj[s])
-      //  }
-      console.log("this is orddis", ordDistances);
-
-      setDistances(tmpDistances);
-      setOrderedDistances(ordDistances);
-      console.log("our array tmp, ord :", tmpDistances, ordDistances);
-    }
-  );
-  console.log("tmpPathNames , locations", tmpPathNames, locations);
+    );
+    console.log("tmpPathNames , locations", tmpPathNames, locations);
+  }
 
   return (
     <>
@@ -284,21 +289,7 @@ function Map(props) {
             }}
           />
         )}
-        {/* {props.backend === "mobile" && tmpPathNames.length === locations.length + 1 && (
-          <MapDirectionsRenderer
-            places={tmpPath}
-            travelMode="DRIVING"
-            valueformarker={false}
-          />
-        )} */}
-        {props.backend === "hospital" &&
-          hoslocations.map((locations) => (
-            <MapDirectionsRenderer
-              places={locations}
-              travelMode="DRIVING"
-              valueformarker={true}
-            />
-          ))}
+        
         {markers.map(({ id, name, position }) => (
           <Marker
             key={id}
@@ -334,6 +325,14 @@ function Map(props) {
           ) : null}
         </Marker>
         {/* <button className="detailsbutton" >Details</button> */}
+        {props.backend === "hospital" &&
+          hoslocations.map((locations) => (
+            <MapDirectionsRenderer
+              places={locations}
+              travelMode="DRIVING"
+              valueformarker={true}
+            />
+          ))}
         {props.backend == "fixed" && (
           <TemporaryDrawer
             tabledetails={distances}
@@ -342,7 +341,7 @@ function Map(props) {
           />
         )}
         {props.backend === "mobile" &&
-          tmpPathNames.length === locations.length+1 && (
+          tmpPathNames.length === locations.length + 1 && (
             <>
               <MapDirectionsRenderer
                 places={tmpPath}
@@ -352,7 +351,9 @@ function Map(props) {
               {
                 <TemporaryDrawer
                   tabledetails={distances}
-                  tabledetails2={tmpPathNames.map(name =>{return [name];})}
+                  tabledetails2={tmpPathNames.map((name) => {
+                    return [name];
+                  })}
                   backend={props.backend}
                 />
               }
@@ -407,12 +408,16 @@ const Maps = (props) => {
         <Map markers={activeMarker} color={props.color} backend={backend} />
       </>
     ) : (
+      <>
       <h1>
         No {backend} {backend != "hospital" && "donor"} registered ☹️
       </h1>
+      </>
     )
   ) : (
+    <>
     <h1>loading</h1>
+    </>
   );
 };
 
