@@ -372,7 +372,7 @@ const Maps = (props) => {
   const { backend } = props;
 
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAP2XSU0zxJBEQGhwVKQul5MIxLugThY1w", // Add your API key
+    googleMapsApiKey: "", // Add your API key
   });
 
   // var markers=[];
